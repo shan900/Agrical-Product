@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agrical Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+    body {
+      background: url('p4-agriculture-feb19.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #2d3748;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar {
+      width: 220px;
+      background: rgba(47, 62, 70, 0.9);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      left: 0;
+      top: 0;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+      z-index: 10;
+      padding: 30px 0 20px;
+    }
+
+    .sidebar-menu { list-style: none; padding: 0; }
+    .sidebar-menu li { margin-bottom: 5px; }
+    .sidebar-menu li a {
+      display: flex;
+      align-items: center;
+      color: #d1d5db;
+      text-decoration: none;
+      font-size: 14px;
+      padding: 12px 20px;
+      transition: background 0.3s;
+    }
+    .sidebar-menu li a i { margin-right: 10px; font-size: 16px; }
+    .sidebar-menu li a:hover {
+      background: #354f52;
+      border-radius: 8px;
+      color: #ffffff;
+    }
+
+    .sidebar-logout { padding: 0 20px; }
+    .logout {
+      background: #84a98c;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 10px 0;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.3s;
+    }
+    .logout:hover { background: #52796f; }
+
+    main {
+      margin-left: 220px;
+      width: calc(100% - 220px);
+      min-height: 100vh;
+      backdrop-filter: blur(5px);
+      background-color: rgba(255, 255, 255, 0.4);
+      padding-top: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(5px);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .search-container { display: flex; align-items: center; }
+    .dashboard-search {
+      padding: 10px 20px;
+      width: 250px;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px 0 0 20px;
+      outline: none;
+      font-size: 14px;
+      background-color: #ffffff;
+    }
+    .search-button {
+      padding: 10px 18px;
+      background: #84a98c;
+      color: white;
+      border: 1px solid #84a98c;
+      border-radius: 0 20px 20px 0;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 16px;
+    }
+    .search-button:hover { background: #52796f; }
+
+    .language-switch { display: flex; gap: 10px; }
+    .lang-btn {
+      padding: 8px 14px;
+      border: 1px solid #84a98c;
+      border-radius: 20px;
+      background: #ffffff;
+      cursor: pointer;
+      font-size: 14px;
+      color: #52796f;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .lang-btn:hover { background: #84a98c; color: white; }
+
+    .dashboard-content {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      color: #94a3b8;
+      backdrop-filter: blur(5px);
+      background: rgba(255,255,255,0.3);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    .modal-content button {
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    .modal-content #confirmLogout { background: green; }
+    .modal-content #confirmLogout:hover { background: #388e3c; }
+    .modal-content .cancel { background: red; }
+    .modal-content .cancel:hover { background: #d32f2f; }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: rgba(47, 62, 70, 0.9);
+      min-width: 160px;
+      box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      color: white;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #354f52;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div>
+    <ul class="sidebar-menu">
+      <li><a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a></li>
+      <li><a href="ifarmer.html"><i class="fas fa-leaf"></i> Product Info</a></li>
+      <li><a href="farmer.php"><i class="fas fa-seedling"></i> Farmer</a></li>
+      <li><a href="#"><i class="fas fa-chart-line"></i> Historical Data</a></li>
+      <li class="dropdown"><a href="javascript:void(0)"><i class="fas fa-chart-bar"></i> Consumer Demand</a>
+        <div class="dropdown-content">
+          <a href="#">Consumption Patterns</a>
+          <a href="#">Price Elasticity</a>
+        </div>
+      </li>
+      <li class="dropdown"><a href="javascript:void(0)"><i class="fas fa-truck"></i> Real Time Supply</a>
+        <div class="dropdown-content">
+          <a href="#">Inventory</a>
+          <a href="#">Storage</a>
+          <a href="#">Logistics</a>
+        </div>
+      </li>
+      <li><a href="current_market_price.html"><i class="fas fa-dollar-sign"></i> Market Prices</a></li>
+      <li><a href="#"><i class="fas fa-lightbulb"></i> Recommendations</a></li>
+      <li class="dropdown"><a href="javascript:void(0)"><i class="fas fa-user"></i> Customer Info</a>
+        <div class="dropdown-content">
+          <a href="#">Buyer Info</a>
+          <a href="seller_info.php">Seller Info</a> <!-- Link updated to seller_info.php -->
+        </div>
+      </li>
+      <li class="dropdown"><a href="javascript:void(0)"><i class="fas fa-cogs"></i> Analytical Tools</a>
+        <div class="dropdown-content">
+          <a href="chart.php">Charts</a> <!-- Updated link to chart.php -->
+          <a href="#">Forecasting</a>
+          <a href="#">Scenario Analysis</a>
+        </div>
+      </li>
+      <li><a href="customer_helpline.html"><i class="fas fa-headset"></i> Helpline</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-logout">
+    <button class="logout" id="logoutButton">Logout</button>
+  </div>
+</div>
+
+<main>
+  <div class="top-bar">
+    <div class="search-container">
+      <input type="text" class="dashboard-search" placeholder="Search...">
+      <button class="search-button"><i class="fas fa-search"></i></button>
+    </div>
+    <div class="language-switch">
+      <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+      <button class="lang-btn" onclick="setLanguage('bn')">BN</button>
+    </div>
+  </div>
+
+  <section class="dashboard-content">
+    <!-- Content goes here -->
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Agrical Product Dashboard</p>
+</footer>
+
+<div id="logoutModal" class="modal">
+  <div class="modal-content">
+    <p>Are you sure you want to log out?</p>
+    <button id="confirmLogout">Yes</button>
+    <button id="cancelLogout" class="cancel">No</button>
+  </div>
+</div>
+
+<script>
+const logoutButton = document.getElementById('logoutButton');
+const logoutModal = document.getElementById('logoutModal');
+const confirmLogout = document.getElementById('confirmLogout');
+const cancelLogout = document.getElementById('cancelLogout');
+
+logoutButton.onclick = () => { logoutModal.style.display = 'flex'; };
+confirmLogout.onclick = () => { window.location.href = 'index.html'; };
+cancelLogout.onclick = () => { logoutModal.style.display = 'none'; };
+
+function setLanguage(lang) {
+  // Placeholder for language toggle logic
+}
+</script>
+
+</body>
+</html>
